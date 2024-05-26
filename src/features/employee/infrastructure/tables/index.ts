@@ -23,3 +23,23 @@ export const EMPLOYEE_TABLE = Object.freeze({
     },
   },
 });
+
+export const EMPLOYEE_TYPE_TABLE = Object.freeze({
+  NAME: 'employee_types',
+  COLUMNS: {
+    ID: {
+      NAME: 'id',
+    },
+    TYPE: {
+      NAME: 'type',
+      TYPE: <ColumnType>'varchar',
+      LENGTH: 255,
+    },
+    CREATED_AT: {
+      NAME: 'created_at',
+    },
+    UPDATED_AT: {
+      NAME: 'updated_at',
+    },
+  },
+});
