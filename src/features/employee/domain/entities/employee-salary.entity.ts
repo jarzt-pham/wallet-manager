@@ -3,16 +3,15 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  EMPLOYEE_TABLE,
-  EMPLOYEE_SALARY_TABLE,
-} from '../../infrastructure/tables';
 import { Employee } from './employee.entity';
 import { CreateEmployeeSalaryPayload } from './types';
+import { EMPLOYEE_SALARY_TABLE } from '../../infrastructure';
+import { EmployeeSalaryType } from './employee-salary-type.entity';
 
 @Entity({
   name: EMPLOYEE_SALARY_TABLE.NAME,
@@ -29,7 +28,17 @@ export class EmployeeSalary {
     nullable: false,
   })
   baseSalary: number;
-  
+
+  @ManyToOne(() => EmployeeSalaryType, (e) => e.employeeSalaries, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn({
+    name: EMPLOYEE_SALARY_TABLE.COLUMNS.EMPLOYEE_SALARY_TYPE_ID.NAME,
+  })
+  employeeSalaryType: EmployeeSalaryType;
+
   @OneToOne(() => Employee, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
@@ -50,6 +59,7 @@ export class EmployeeSalary {
 
   create(payload: CreateEmployeeSalaryPayload) {
     this.employee = payload.employee;
+    this.employeeSalaryType = payload.employeeSalaryType;
     this.createdAt = new Date();
   }
 }
