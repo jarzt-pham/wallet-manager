@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EMPLOYEE_TABLE } from '../../infrastructure/tables';
 import { CreateEmployeePayload } from './types';
+import { EmployeeType } from './employee-type.entity';
 
 @Entity({
   name: EMPLOYEE_TABLE.NAME,
@@ -24,11 +27,9 @@ export class Employee {
   })
   name: string;
 
-  @Column({
-    name: EMPLOYEE_TABLE.COLUMNS.DAY_OF_JOIN.NAME,
-    type: EMPLOYEE_TABLE.COLUMNS.DAY_OF_JOIN.TYPE,
-  })
-  dayOfJoin: Date;
+  @ManyToOne(() => EmployeeType, (employee) => employee.employees)
+  @JoinColumn({ name: EMPLOYEE_TABLE.COLUMNS.EMPLOYEE_TYPE_ID.NAME })
+  employeeType: EmployeeType;
 
   @CreateDateColumn({
     name: EMPLOYEE_TABLE.COLUMNS.CREATED_AT.NAME,
@@ -44,10 +45,6 @@ export class Employee {
     this.name = payload;
   }
 
-  set employeeJoinDate(payload: Date) {
-    this.dayOfJoin = payload;
-  }
-
   set employeeCreatedAt(payload: Date) {
     this.createdAt = payload;
   }
@@ -58,7 +55,7 @@ export class Employee {
 
   create(payload: CreateEmployeePayload) {
     this.employeeName = payload.name;
-    this.employeeJoinDate = payload.dayOfJoin;
+    this.employeeType = payload.employeeType;
     this.employeeCreatedAt = new Date();
   }
 }
