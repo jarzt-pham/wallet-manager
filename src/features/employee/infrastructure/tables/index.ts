@@ -57,6 +57,27 @@ export const EMPLOYEE_SALARY_TABLE = Object.freeze({
     EMPLOYEE_ID: {
       NAME: 'employee_id',
     },
+    EMPLOYEE_SALARY_TYPE_ID: {
+      NAME: 'employee_salary_type_id',
+    },
+    CREATED_AT: {
+      NAME: 'created_at',
+    },
+    UPDATED_AT: {
+      NAME: 'updated_at',
+    },
+  },
+});
+
+export const EMPLOYEE_SALARY_TYPE_TABLE = Object.freeze({
+  NAME: 'employee_salary_types',
+  COLUMNS: {
+    ID: {
+      NAME: 'id',
+    },
+    TYPE: {
+      NAME: 'type',
+    },
     CREATED_AT: {
       NAME: 'created_at',
     },
