@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { EMPLOYEE_TYPE_TABLE } from '../../infrastructure/tables';
 import { Employee } from './employee.entity';
+import { CreateEmployeeTypePayload } from './types';
 
 @Entity({
   name: EMPLOYEE_TYPE_TABLE.NAME,
@@ -38,15 +39,8 @@ export class EmployeeType {
   })
   updatedAt: Date;
 
-  set employeeType(payload: string) {
-    this.type = payload;
-  }
-
-  set employeeCreatedAt(payload: Date) {
-    this.createdAt = payload;
-  }
-
-  set employeeUpdatedAt(payload: Date) {
-    this.updatedAt = payload;
+  create(payload: CreateEmployeeTypePayload) {
+    this.type = payload.type;
+    this.createdAt = new Date();
   }
 }

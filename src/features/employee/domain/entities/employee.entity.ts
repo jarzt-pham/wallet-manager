@@ -24,10 +24,15 @@ export class Employee {
     name: EMPLOYEE_TABLE.COLUMNS.NAME.NAME,
     type: EMPLOYEE_TABLE.COLUMNS.NAME.TYPE,
     length: EMPLOYEE_TABLE.COLUMNS.NAME.LENGTH,
+    nullable: false,
   })
   name: string;
 
-  @ManyToOne(() => EmployeeType, (employee) => employee.employees)
+  @ManyToOne(() => EmployeeType, (employee) => employee.employees, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn({ name: EMPLOYEE_TABLE.COLUMNS.EMPLOYEE_TYPE_ID.NAME })
   employeeType: EmployeeType;
 
@@ -41,21 +46,9 @@ export class Employee {
   })
   updatedAt: Date;
 
-  set employeeName(payload: string) {
-    this.name = payload;
-  }
-
-  set employeeCreatedAt(payload: Date) {
-    this.createdAt = payload;
-  }
-
-  set employeeUpdatedAt(payload: Date) {
-    this.updatedAt = payload;
-  }
-
   create(payload: CreateEmployeePayload) {
-    this.employeeName = payload.name;
+    this.name = payload.name;
     this.employeeType = payload.employeeType;
-    this.employeeCreatedAt = new Date();
+    this.createdAt = new Date();
   }
 }
