@@ -4,12 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EMPLOYEE_TABLE } from '../../infrastructure/tables';
 import { CreateEmployeePayload } from './types';
 import { EmployeeType } from './employee-type.entity';
+import { EmployeeAttendance } from './employee-attendance.entity';
 
 @Entity({
   name: EMPLOYEE_TABLE.NAME,
@@ -34,6 +36,9 @@ export class Employee {
   })
   @JoinColumn({ name: EMPLOYEE_TABLE.COLUMNS.EMPLOYEE_TYPE_ID.NAME })
   employeeType: EmployeeType;
+
+  @OneToMany(() => EmployeeAttendance, (ea) => ea.employee)
+  employeeAttendances: EmployeeAttendance[];
 
   @CreateDateColumn({
     name: EMPLOYEE_TABLE.COLUMNS.CREATED_AT.NAME,
