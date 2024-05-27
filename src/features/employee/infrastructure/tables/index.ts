@@ -42,3 +42,26 @@ export const EMPLOYEE_TYPE_TABLE = Object.freeze({
     },
   },
 });
+
+export const EMPLOYEE_SALARY_TABLE = Object.freeze({
+  NAME: 'employee_salaries',
+  COLUMNS: {
+    ID: {
+      NAME: 'id',
+    },
+    BASE_SALARY: {
+      NAME: 'base_salary',
+      TYPE: <ColumnType>'decimal',
+      LENGTH: '10, 2',
+    },
+    EMPLOYEE_ID: {
+      NAME: 'employee_id',
+    },
+    CREATED_AT: {
+      NAME: 'created_at',
+    },
+    UPDATED_AT: {
+      NAME: 'updated_at',
+    },
+  },
+});
