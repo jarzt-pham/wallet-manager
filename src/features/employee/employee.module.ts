@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { EmployeeService } from './infrastructure/services/employee.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  Employee,
-  EmployeeAttendance,
-  EmployeeSalary,
-  EmployeeSalaryType,
-  EmployeeType,
-} from './domain';
+
 import { EmployeeController } from './presentation';
+import { Employee } from './domain/entities/employee.entity';
+import { EmployeeType } from './domain/entities/employee-type.entity';
+import { EmployeeSalary } from './domain/entities/employee-salary.entity';
+import { EmployeeAttendance } from './domain/entities/employee-attendance.entity';
+import { EmployeeWallet } from '../wallet/domain/entities/employee-wallet.entity';
 
 @Module({
   imports: [
@@ -17,9 +16,10 @@ import { EmployeeController } from './presentation';
       EmployeeType,
 
       EmployeeSalary,
-      EmployeeSalaryType,
 
       EmployeeAttendance,
+
+      EmployeeWallet,
     ]),
   ],
   controllers: [EmployeeController],
