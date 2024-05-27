@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
-import { EmployeeType } from 'src/features';
 import { EMPLOYEE_TYPE_TABLE } from 'src/features/employee/infrastructure/tables';
 import employeeTypeData from './mocks/employee-type.json';
+import { EmployeeType } from 'src/features/employee/domain/entities/employee-type.entity';
 
 const createAlterIncrementQuery = (
   table: {
