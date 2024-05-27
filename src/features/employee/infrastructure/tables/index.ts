@@ -11,9 +11,8 @@ export const EMPLOYEE_TABLE = Object.freeze({
       TYPE: <ColumnType>'varchar',
       LENGTH: 255,
     },
-    DAY_OF_JOIN: {
-      NAME: 'day_of_join',
-      TYPE: <ColumnType>'timestamptz',
+    EMPLOYEE_TYPE_ID: {
+      NAME: 'employee_type_id',
     },
     CREATED_AT: {
       NAME: 'created_at',
