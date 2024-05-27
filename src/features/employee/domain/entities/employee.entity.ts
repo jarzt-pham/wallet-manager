@@ -31,7 +31,6 @@ export class Employee {
   @ManyToOne(() => EmployeeType, (employee) => employee.employees, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
-    nullable: false,
   })
   @JoinColumn({ name: EMPLOYEE_TABLE.COLUMNS.EMPLOYEE_TYPE_ID.NAME })
   employeeType: EmployeeType;
