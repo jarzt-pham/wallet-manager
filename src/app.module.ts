@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Configuration } from './configuration';
-import { EmployeeModule } from './features';
+import { EmployeeModule, WalletModule } from './features';
 
 @Module({
   imports: [
@@ -12,6 +12,7 @@ import { EmployeeModule } from './features';
     TypeOrmModule.forRootAsync(Configuration.TypeOrmConfiguration.Async),
 
     EmployeeModule,
+    WalletModule
   ],
   controllers: [AppController],
   providers: [AppService],
