@@ -1,4 +1,5 @@
 import { ColumnType } from 'typeorm';
+import { AttendanceStatusEnum } from '../../domain/entities/types';
 
 export const EMPLOYEE_TABLE = Object.freeze({
   NAME: 'employees',
@@ -77,6 +78,33 @@ export const EMPLOYEE_SALARY_TYPE_TABLE = Object.freeze({
     },
     TYPE: {
       NAME: 'type',
+    },
+    CREATED_AT: {
+      NAME: 'created_at',
+    },
+    UPDATED_AT: {
+      NAME: 'updated_at',
+    },
+  },
+});
+
+export const EMPLOYEE_ATTENDANCE_TABLE = Object.freeze({
+  NAME: 'employee_attendances',
+  COLUMNS: {
+    ID: {
+      NAME: 'id',
+    },
+    DATE: {
+      NAME: 'date',
+    },
+    EMPLOYEE_ID: {
+      NAME: 'employee_id',
+    },
+    STATUS: {
+      NAME: 'status',
+      TYPE: <ColumnType>'enum',
+      ENUM: AttendanceStatusEnum,
+      DEFAULT: AttendanceStatusEnum.PRESENT,
     },
     CREATED_AT: {
       NAME: 'created_at',

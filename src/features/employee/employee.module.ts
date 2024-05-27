@@ -3,6 +3,7 @@ import { EmployeeService } from './infrastructure/services/employee.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Employee,
+  EmployeeAttendance,
   EmployeeSalary,
   EmployeeSalaryType,
   EmployeeType,
@@ -14,8 +15,11 @@ import { EmployeeController } from './presentation';
     TypeOrmModule.forFeature([
       Employee,
       EmployeeType,
+
       EmployeeSalary,
       EmployeeSalaryType,
+
+      EmployeeAttendance,
     ]),
   ],
   controllers: [EmployeeController],
