@@ -1,8 +1,10 @@
+import { BullModuleOptions, BullRootModuleOptions } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
+import { JOB_QUEUE } from 'src/features/job/queue';
 
 export namespace Configuration {
   export const TypeOrmConfiguration: {
@@ -23,5 +25,32 @@ export namespace Configuration {
       }),
     },
     Default: undefined,
+  };
+
+  export const BullConfiguration = {
+    Root: <BullRootModuleOptions>{
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    },
+    Register: <BullModuleOptions[]>[
+      {
+        name: JOB_QUEUE.WALLET,
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: 10000,
+        },
+      },
+      {
+        name: JOB_QUEUE.WALLET_LOG,
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: 10000,
+        },
+      },
+    ]
+      
+    
   };
 }
