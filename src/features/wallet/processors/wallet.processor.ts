@@ -38,14 +38,14 @@ export class WalletProcessor {
     this._logger = new Logger(WalletProcessor.name);
   }
 
-  createMessage({ batch, paging }: WalletProcessorJobPayload) {
+  createMessage({ batch }: WalletProcessorJobPayload) {
     return `${this.JOB_TYPE}: Processing wallet job with batch ${batch}`;
   }
 
   @Process()
   async handleBalanceCalculation(job: Job<WalletProcessorJobPayload>) {
     const { batch, paging } = job.data;
-    
+
     this._logger.log(this.createMessage(job.data));
 
     const entity = new JobEntity();
