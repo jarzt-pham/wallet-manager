@@ -51,6 +51,7 @@ export class Employee {
   updatedAt: Date;
 
   create(payload: CreateEmployeePayload) {
+    this.id = payload?.id ? payload.id : undefined;
     this.name = payload.name;
     this.employeeType = payload.employeeType;
     this.createdAt = new Date();
