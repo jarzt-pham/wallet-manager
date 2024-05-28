@@ -66,7 +66,7 @@ export class WalletProcessor {
 
     try {
       const employeeIds =
-        await this._walletService.calculateAndUpdateBatch(batch);
+        await this._walletService.calculateAndUpdateByBatch(batch);
 
       savedJob.payload = { ...savedJob.payload, employee_ids: employeeIds };
       savedJob.status = JobStatusEnum.COMPLETED;

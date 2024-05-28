@@ -40,17 +40,19 @@ export class AppService implements OnModuleInit {
 
   private async scheduleDailyCalculateAndUpdateBalance() {
     const totalEmployees = await this._employeeService.countEmployees();
-    const USER_AMOUNT_UPDATE =
-      this._configService.get('USER_AMOUNT_UPDATE') ?? 1;
+    const NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
+      this._walletService.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
 
-    const totalBatches = Math.ceil(totalEmployees / USER_AMOUNT_UPDATE);
+    const totalBatches = Math.ceil(
+      totalEmployees / NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+    );
 
     for (let batch = 0; batch < totalBatches; batch++) {
       await this._walletQueue.add({
         batch,
         paging: {
-          limit: USER_AMOUNT_UPDATE,
-          offset: batch * USER_AMOUNT_UPDATE,
+          limit: NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+          offset: batch * NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
         },
       });
     }

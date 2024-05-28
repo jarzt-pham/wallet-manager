@@ -29,7 +29,9 @@ import { getDaysInMonth } from 'src/utils';
 @Injectable()
 export class WalletService {
   private readonly _logger: Logger;
-  private USER_AMOUNT_UPDATE: number;
+
+  NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY: number;
+  static DEFAULT_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY = 1;
 
   constructor(
     private _configService: ConfigService,
@@ -46,22 +48,28 @@ export class WalletService {
   ) {
     this._logger = new Logger(WalletService.name);
 
-    this.USER_AMOUNT_UPDATE =
-      this._configService.get('USER_AMOUNT_UPDATE') ?? 1;
+    this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
+      this._configService.get('NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY') ??
+      WalletService.DEFAULT_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
   }
 
   //test
   async triggerForTesting() {
     const totalEmployees = await this._employeeService.countEmployees();
-    const USER_AMOUNT_UPDATE = 1;
-    const totalBatches = Math.ceil(totalEmployees / USER_AMOUNT_UPDATE);
+
+    // for the testing, will update 1 employee only
+    const TESTING_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
+      WalletService.DEFAULT_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
+    const totalBatches = Math.ceil(
+      totalEmployees / TESTING_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+    );
 
     for (let batch = 0; batch < totalBatches; batch++) {
       await this._walletQueue.add({
         batch,
         paging: {
-          limit: this.USER_AMOUNT_UPDATE,
-          offset: batch * this.USER_AMOUNT_UPDATE,
+          limit: this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+          offset: batch * this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
         },
       });
     }
@@ -75,7 +83,7 @@ export class WalletService {
     });
   }
 
-  async calculateAndUpdateBatch(batch: number) {
+  async calculateAndUpdateByBatch(batch: number) {
     const currentDate = new Date();
     const daysInMonth = getDaysInMonth(currentDate);
 
@@ -87,16 +95,16 @@ export class WalletService {
       let employees: EmployeeDetailDto[];
       employees = await this._employeeDao.getEmployeeDetails({
         paging: {
-          limit: this.USER_AMOUNT_UPDATE,
-          offset: batch * this.USER_AMOUNT_UPDATE,
+          limit: this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+          offset: batch * this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
         },
       });
 
-      //will store below id array to job payload
+      //will store id array to job payload
       const employeeToStoreJobPayload: number[] = [];
 
       for (const employee of employees) {
-        const employeeMap: {
+        const employeeMapper: {
           id: number;
           baseSalary: number;
           dayOfWorks: number;
@@ -114,33 +122,30 @@ export class WalletService {
           currentBalance: employee.current_balance,
         };
 
-        let salaryWillGet = 0;
-        if (employee.type === EmployeeTypeEnum.FULL_TIME) {
-          // I assume salary will be integer in this assessment
-          const dailyRate = Math.floor(employeeMap.baseSalary / daysInMonth);
-          salaryWillGet = dailyRate * employeeMap.dayOfWorks;
-        } else {
-          const dailyRate = employeeMap.baseSalary;
-          salaryWillGet = dailyRate * employeeMap.dayOfWorks;
-        }
+        // I assume salary will be integer in this assessment
+        let dailyRate =
+          employee.type === EmployeeTypeEnum.FULL_TIME
+            ? Math.floor(employeeMapper.baseSalary / daysInMonth)
+            : employeeMapper.baseSalary;
+        let salaryWillGet = dailyRate * employeeMapper.dayOfWorks;
 
         const employeeTypeEntity = new EmployeeType();
-        employeeTypeEntity.create({ type: employeeMap.type });
+        employeeTypeEntity.create({ type: employeeMapper.type });
         const employeeEntity = new Employee();
         employeeEntity.create({
-          id: employeeMap.id,
+          id: employeeMapper.id,
           employeeType: employeeTypeEntity,
-          name: employeeMap.name,
+          name: employeeMapper.name,
         });
 
-        let balanceAfter = employeeMap.currentBalance + salaryWillGet;
+        let balanceAfter = employeeMapper.currentBalance + salaryWillGet;
 
         const employeeWallet = new EmployeeWallet();
         employeeWallet.create({
+          id: employeeMapper.employeeWalletId,
           balance: balanceAfter,
           employee: employeeEntity,
         });
-        employeeWallet.id = employeeMap.employeeWalletId;
 
         //update balance
         await this._employeeWalletRepo.update(
@@ -154,7 +159,7 @@ export class WalletService {
           amountChanged: salaryWillGet,
           description: 'Update balance for employee wallet',
           newBalance: balanceAfter,
-          previousBalance: employeeMap.currentBalance,
+          previousBalance: employeeMapper.currentBalance,
         });
 
         employeeToStoreJobPayload.push(employee.id);
