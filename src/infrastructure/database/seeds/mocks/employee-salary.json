@@ -1,0 +1,14 @@
+[
+  {
+    "base_salary": 11000,
+    "employee": "Nguyen Van A"
+  },
+  {
+    "base_salary": 31600,
+    "employee": "Nguyen Van B"
+  },
+  {
+    "base_salary": 7000,
+    "employee": "Pham Dong B"
+  }
+]
