@@ -19,6 +19,7 @@ import employeeAttendanceForNguyenVanA from '../mocks/employee-attendance-nguyen
 import employeeAttendanceForNguyenVanB from '../mocks/employee-attendance-nguyen-van-b.json';
 import employeeAttendanceForPhamDongB from '../mocks/employee-attendance-pham-dong-b.json';
 import { EmployeeAttendance } from 'src/features/employee/domain/entities/employee-attendance.entity';
+import { Logger } from '@nestjs/common';
 
 const truncateEmployeeType = async (dataSource: DataSource) => {
   const isRunTruncateSuccessful = true;
@@ -268,11 +269,20 @@ const initDataForEmployeeAttendance = async (
   return dataSource.manager.save(employeeAttendanceEntities);
 };
 
-export const initSeedEmployeeDomain = async (dataSource: DataSource) => {
-  console.info('Seeding employee domain...');
+export const initSeedEmployeeDomain = async ({
+  dataSource,
+  logger,
+}: {
+  dataSource: DataSource;
+  logger: Logger;
+}) => {
+  logger.warn('Seeding employee domain...');
+  logger.warn(
+    'Employee, EmployeeType, EmployeeSalary, EmployeeWallet, EmployeeAttendance',
+  );
   const isTruncate = await truncateEmployeeDomain(dataSource);
   if (!isTruncate) {
-    console.log('Employee Cluster has data. Seeding employee domain stopped!');
+    logger.warn('Employee Cluster has data. Seeding employee domain stopped!');
     return;
   }
 
@@ -294,6 +304,6 @@ export const initSeedEmployeeDomain = async (dataSource: DataSource) => {
     await queryRunner.rollbackTransaction();
   } finally {
     await queryRunner.release();
-    console.log('Seeding employee domain completed!');
+    logger.log('Seeding employee domain completed!');
   }
 };
