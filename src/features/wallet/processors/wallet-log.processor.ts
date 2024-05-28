@@ -11,11 +11,13 @@ import { JOB_QUEUE } from 'src/features/job/queue';
 import { EmployeeWalletLog } from '../domain/entities/employee-wallet-log.entity';
 import { EmployeeWallet } from '../domain/entities/employee-wallet.entity';
 import { Job as JobEntity } from 'src/features/job/domain/entities/job.entity';
-import { Logger } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import {
   JobStatusEnum,
   JobTypeEnum,
 } from 'src/features/job/domain/entities/types/job.type';
+import { EmployeeWalletExceptions } from '../exceptions';
+import { JobExceptions } from 'src/features/job/exceptions';
 
 export type WalletLogProcessorJobPayload = {
   previousBalance: number;
@@ -77,7 +79,7 @@ export class WalletLogProcessor {
     } catch (err) {
       console.error(err);
       this._logger.error(err);
-      throw new Error('Error while saving job');
+      throw new InternalServerErrorException('Error while saving job');
     }
 
     const walletLog = new EmployeeWalletLog();
@@ -98,6 +100,7 @@ export class WalletLogProcessor {
       this._logger.error(error);
       savedJob.message = error.toString();
       savedJob.status = JobStatusEnum.FAILED;
+      throw new InternalServerErrorException('Error while saving wallet log');
     }
 
     return savedJob;
@@ -115,14 +118,19 @@ export class WalletLogProcessor {
     } catch (error) {
       console.log(error);
       this._logger.error(error);
+      throw new JobExceptions.JobNotFound(savedJobFromProcess.id);
     }
 
-    if (jobEntity) {
-      jobEntity.payload = savedJobFromProcess.payload;
-      jobEntity.status = savedJobFromProcess.status;
-      jobEntity.message = savedJobFromProcess.message;
+    jobEntity.payload = savedJobFromProcess.payload;
+    jobEntity.status = savedJobFromProcess.status;
+    jobEntity.message = savedJobFromProcess.message;
 
+    try {
       await this._jobRepo.update(jobEntity.id, jobEntity);
+    } catch (error) {
+      console.log(error);
+      this._logger.error(error);
+      throw new InternalServerErrorException('Error while saving job');
     }
   }
 
@@ -138,14 +146,19 @@ export class WalletLogProcessor {
     } catch (error) {
       console.log(error);
       this._logger.error(error);
+      throw new InternalServerErrorException('Error while saving job');
     }
 
-    if (jobEntity) {
-      jobEntity.message = error.message.toString();
-      jobEntity.payload = savedJobFromProcess.payload;
-      jobEntity.status = JobStatusEnum.FAILED;
+    jobEntity.message = error.message.toString();
+    jobEntity.payload = savedJobFromProcess.payload;
+    jobEntity.status = JobStatusEnum.FAILED;
 
+    try {
       await this._jobRepo.update(jobEntity.id, jobEntity);
+    } catch (error) {
+      console.log(error);
+      this._logger.error(error);
+      throw new InternalServerErrorException('Error while saving job');
     }
   }
 }

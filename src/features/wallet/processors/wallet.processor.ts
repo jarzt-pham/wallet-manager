@@ -14,7 +14,9 @@ import {
   JobStatusEnum,
   JobTypeEnum,
 } from 'src/features/job/domain/entities/types/job.type';
-import { Logger } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
+import { EmployeeWalletExceptions } from '../exceptions';
+import { JobExceptions } from 'src/features/job/exceptions';
 
 export type WalletProcessorJobPayload = {
   batch: number;
@@ -61,7 +63,7 @@ export class WalletProcessor {
     } catch (err) {
       console.error(err);
       this._logger.error(err);
-      throw new Error('Error while saving job');
+      throw new InternalServerErrorException('Error while saving job');
     }
 
     try {
@@ -89,14 +91,20 @@ export class WalletProcessor {
       });
     } catch (err) {
       console.log(err);
+      this._logger.error(err);
+      throw new JobExceptions.JobNotFound(savedJobFromProcess.id);
     }
 
-    if (jobEntity) {
-      jobEntity.payload = savedJobFromProcess.payload;
-      jobEntity.status = savedJobFromProcess.status;
-      jobEntity.message = savedJobFromProcess.message;
+    jobEntity.payload = savedJobFromProcess.payload;
+    jobEntity.status = savedJobFromProcess.status;
+    jobEntity.message = savedJobFromProcess.message;
 
+    try {
       await this._jobRepo.update(jobEntity.id, jobEntity);
+    } catch (err) {
+      console.log(err);
+      this._logger.error(err);
+      throw new InternalServerErrorException('Error while saving job');
     }
   }
 
@@ -113,12 +121,16 @@ export class WalletProcessor {
       console.log(err);
     }
 
-    if (jobEntity) {
-      jobEntity.message = error.message.toString();
-      jobEntity.payload = savedJobFromProcess.payload;
-      jobEntity.status = JobStatusEnum.FAILED;
+    jobEntity.message = error.message.toString();
+    jobEntity.payload = savedJobFromProcess.payload;
+    jobEntity.status = JobStatusEnum.FAILED;
 
+    try {
       await this._jobRepo.update(jobEntity.id, jobEntity);
+    } catch (err) {
+      console.log(err);
+      this._logger.error(err);
+      throw new InternalServerErrorException('Error while saving job');
     }
   }
 }
