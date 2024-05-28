@@ -1,19 +1,9 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 
 //ignore barbel pattern error NestJs
 import { Employee } from '../../domain/entities/employee.entity';
-import { EmployeeSalary } from '../../domain/entities/employee-salary.entity';
-import { EmployeeType } from '../../domain/entities/employee-type.entity';
 
-import { DataSource, Repository } from 'typeorm';
-import { EmployeeExceptions } from '../../exceptions';
-import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
+import { DataSource } from 'typeorm';
 import { EmployeeAttendance } from '../../domain/entities/employee-attendance.entity';
 import { AttendanceStatusEnum } from '../../domain/entities/types';
 
