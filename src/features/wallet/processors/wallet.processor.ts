@@ -16,6 +16,14 @@ import {
 } from 'src/features/job/domain/entities/types/job.type';
 import { Logger } from '@nestjs/common';
 
+export type WalletProcessorJobPayload = {
+  batch: number;
+  paging: {
+    limit: number;
+    offset: number;
+  };
+};
+
 @Processor(JOB_QUEUE.WALLET)
 export class WalletProcessor {
   private JOB_TYPE = JobTypeEnum.UPDATE_WALLET;
@@ -30,17 +38,15 @@ export class WalletProcessor {
     this._logger = new Logger(WalletProcessor.name);
   }
 
+  createMessage({ batch, paging }: WalletProcessorJobPayload) {
+    return `${this.JOB_TYPE}: Processing wallet job with batch ${batch}`;
+  }
+
   @Process()
-  async handleBalanceCalculation(
-    job: Job<{
-      batch: number;
-      paging: {
-        limit: number;
-        offset: number;
-      };
-    }>,
-  ) {
+  async handleBalanceCalculation(job: Job<WalletProcessorJobPayload>) {
     const { batch, paging } = job.data;
+    
+    this._logger.log(this.createMessage(job.data));
 
     const entity = new JobEntity();
     entity.create({

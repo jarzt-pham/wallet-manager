@@ -17,6 +17,14 @@ import {
   JobTypeEnum,
 } from 'src/features/job/domain/entities/types/job.type';
 
+export type WalletLogProcessorJobPayload = {
+  previousBalance: number;
+  newBalance: number;
+  amountChanged: number;
+  description: string;
+  employeeWallet: EmployeeWallet;
+};
+
 @Processor(JOB_QUEUE.WALLET_LOG)
 export class WalletLogProcessor {
   private _logger: Logger;
@@ -32,6 +40,10 @@ export class WalletLogProcessor {
     this._logger = new Logger(WalletLogProcessor.name);
   }
 
+  createMessage({ employeeWallet }: WalletLogProcessorJobPayload) {
+    return `${this.JOB_TYPE}: Processing wallet log job with wallet id ${employeeWallet.id}`;
+  }
+
   @Process()
   async handleWalletLog(
     job: Job<{
@@ -42,6 +54,8 @@ export class WalletLogProcessor {
       employeeWallet: EmployeeWallet;
     }>,
   ) {
+    this._logger.log(this.createMessage(job.data));
+
     const {
       amountChanged,
       description,
