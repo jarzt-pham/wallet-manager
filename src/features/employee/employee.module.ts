@@ -8,6 +8,7 @@ import { EmployeeType } from './domain/entities/employee-type.entity';
 import { EmployeeSalary } from './domain/entities/employee-salary.entity';
 import { EmployeeAttendance } from './domain/entities/employee-attendance.entity';
 import { EmployeeWallet } from '../wallet/domain/entities/employee-wallet.entity';
+import { EmployeeDao } from './infrastructure/daos/employee.dao';
 
 @Module({
   imports: [
@@ -16,13 +17,13 @@ import { EmployeeWallet } from '../wallet/domain/entities/employee-wallet.entity
       EmployeeType,
 
       EmployeeSalary,
-
       EmployeeAttendance,
 
       EmployeeWallet,
     ]),
   ],
   controllers: [EmployeeController],
-  providers: [EmployeeService],
+  providers: [EmployeeService, EmployeeDao],
+  exports: [EmployeeService, EmployeeDao, TypeOrmModule],
 })
 export class EmployeeModule {}
