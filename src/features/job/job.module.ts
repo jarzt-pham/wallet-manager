@@ -6,5 +6,6 @@ import { Job } from './domain/entities/job.entity';
   imports: [TypeOrmModule.forFeature([Job])],
   controllers: [],
   providers: [],
+  exports: [TypeOrmModule],
 })
 export class JobModule {}
