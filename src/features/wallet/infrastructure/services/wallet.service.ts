@@ -116,8 +116,9 @@ export class WalletService {
 
         let salaryWillGet = 0;
         if (employee.type === EmployeeTypeEnum.FULL_TIME) {
-          const baseSalary = employeeMap.baseSalary;
-          salaryWillGet = (baseSalary / daysInMonth) * employeeMap.dayOfWorks;
+          // I assume salary will be integer in this assessment
+          const dailyRate = Math.floor(employeeMap.baseSalary / daysInMonth);
+          salaryWillGet = dailyRate * employeeMap.dayOfWorks;
         } else {
           const dailyRate = employeeMap.baseSalary;
           salaryWillGet = dailyRate * employeeMap.dayOfWorks;
@@ -132,9 +133,11 @@ export class WalletService {
           name: employeeMap.name,
         });
 
+        let balanceAfter = employeeMap.currentBalance + salaryWillGet;
+
         const employeeWallet = new EmployeeWallet();
         employeeWallet.create({
-          balance: salaryWillGet,
+          balance: balanceAfter,
           employee: employeeEntity,
         });
         employeeWallet.id = employeeMap.employeeWalletId;
@@ -150,8 +153,8 @@ export class WalletService {
           employeeWallet,
           amountChanged: salaryWillGet,
           description: 'Update balance for employee wallet',
-          newBalance: employeeWallet.balance + salaryWillGet,
-          previousBalance: employeeWallet.balance,
+          newBalance: balanceAfter,
+          previousBalance: employeeMap.currentBalance,
         });
 
         employeeToStoreJobPayload.push(employee.id);
