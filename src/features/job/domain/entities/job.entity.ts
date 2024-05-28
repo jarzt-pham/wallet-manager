@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { JOB_TABLE } from '../../infrastructure';
+import { CreateJobPayload } from './types/job.type';
+import { generateUUID } from 'src/utils';
 
 @Entity({
   name: JOB_TABLE.NAME,
@@ -15,6 +17,7 @@ export class Job {
   @Column({
     name: JOB_TABLE.COLUMNS.ID.NAME,
     type: 'uuid',
+    primary: true,
   })
   id: string;
 
@@ -30,6 +33,7 @@ export class Job {
 
   @Column({
     name: JOB_TABLE.COLUMNS.PAYLOAD.NAME,
+    type: 'jsonb',
   })
   payload: any;
 
@@ -47,4 +51,13 @@ export class Job {
     name: JOB_TABLE.COLUMNS.UPDATED_AT.NAME,
   })
   updatedAt: Date;
+
+  create(payload: CreateJobPayload) {
+    this.id = generateUUID();
+    this.status = payload.status;
+    this.type = payload.type;
+    this.payload = payload?.payload ? payload.payload : {};
+    this.message = payload?.message ? payload.message : '';
+    this.createdAt = new Date();
+  }
 }
