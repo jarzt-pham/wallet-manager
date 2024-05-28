@@ -17,6 +17,16 @@ import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wal
 import { EmployeeAttendance } from '../../domain/entities/employee-attendance.entity';
 import { AttendanceStatusEnum } from '../../domain/entities/types';
 
+export type EmployeeDetailDto = {
+  id: number;
+  name: string;
+  base_salary: number;
+  day_of_works: number;
+  type: string;
+  employee_wallet_id: number;
+  current_balance: number;
+};
+
 @Injectable()
 export class EmployeeDao {
   constructor(private readonly _dataSource: DataSource) {}
@@ -49,7 +59,7 @@ export class EmployeeDao {
       limit: number;
       offset: number;
     };
-  }) {
+  }): Promise<EmployeeDetailDto[]> {
     const query = this._dataSource
       .getRepository(Employee)
       .createQueryBuilder('employee')
@@ -76,12 +86,19 @@ export class EmployeeDao {
         'employee_salary',
         'employee_salary.employee_id = employee.id',
       )
+      .innerJoin(
+        'EmployeeWallet',
+        'employee_wallet',
+        'employee_wallet.employee_id = employee.id',
+      )
       .select([
         'employee.id as id',
         'employee.name as name',
         'employee_salary.base_salary::integer as base_salary',
         'employee_attendances.day_of_works::integer',
         'employeeType.type',
+        'employee_wallet.balance::integer as current_balance',
+        'employee_wallet.id::integer as employee_wallet_id',
       ]);
 
     if (payload?.employeeId)
