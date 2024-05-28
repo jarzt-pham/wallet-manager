@@ -1,5 +1,4 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { initDataForEmployee } from './infrastructure';
 import { DataSource } from 'typeorm';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
@@ -7,6 +6,7 @@ import { JOB_QUEUE } from './features/job/queue';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { EmployeeService } from './features/employee/infrastructure';
 import { ConfigService } from '@nestjs/config';
+import { initSeedEmployeeDomain } from './infrastructure';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -23,7 +23,7 @@ export class AppService implements OnModuleInit {
   }
 
   onModuleInit() {
-    initDataForEmployee(this._dataSource);
+    initSeedEmployeeDomain(this._dataSource);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)

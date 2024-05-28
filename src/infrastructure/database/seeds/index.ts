@@ -1,1 +1,1 @@
-export * from './typeorm-script';
+export * from './scripts/employee.script';
