@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -12,9 +13,7 @@ import { EmployeeType } from '../../domain/entities/employee-type.entity';
 
 import { DataSource, Repository } from 'typeorm';
 import { EmployeeExceptions } from '../../exceptions';
-import { EmployeeDTO, EmployeeSalaryDTO, EmployeeTypeDTO } from '../dtos';
 import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
-import { EmployeeWalletDTO } from 'src/features/wallet/infrastructure/dtos/employee-wallet.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -116,9 +115,9 @@ export class EmployeeService {
     };
   }
 
-  // findAll() {
-  //   return `This action returns all employee`;
-  // }
+  async countEmployees() {
+    return this._employeeRepo.count();
+  }
 
   // findOne(id: number) {
   //   return `This action returns a #${id} employee`;
