@@ -49,6 +49,7 @@ export class EmployeeWallet {
   updatedAt: Date;
 
   create(payload: CreateEmployeeWalletPayload) {
+    this.id = payload?.id ? payload.id : undefined;
     this.balance = payload.balance;
     this.employee = payload.employee;
     this.createdAt = new Date();
