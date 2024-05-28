@@ -1,8 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { EmployeeService } from '../infrastructure';
 import { EmployeeValidateUtils } from '../validates';
 
@@ -13,7 +9,7 @@ export class EmployeeController {
   @Post('/')
   async create(
     @Body()
-    payload: EmployeeValidateUtils.CreateEmployeePayloadValidate
+    payload: EmployeeValidateUtils.CreateEmployeePayloadValidate,
   ) {
     return this.employeeService.create({
       name: payload.name,
