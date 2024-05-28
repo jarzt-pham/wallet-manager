@@ -53,7 +53,7 @@ export class EmployeeDao {
     const query = this._dataSource
       .getRepository(Employee)
       .createQueryBuilder('employee')
-      .innerJoin('employee.employeeType', 'employeeType')
+      .innerJoin('employee.employeeType', 'employee_type')
       .innerJoin(
         (subQuery) =>
           subQuery
@@ -86,7 +86,7 @@ export class EmployeeDao {
         'employee.name as name',
         'employee_salary.base_salary::integer as base_salary',
         'employee_attendances.day_of_works::integer',
-        'employeeType.type',
+        'employee_type.type as type',
         'employee_wallet.balance::integer as current_balance',
         'employee_wallet.id::integer as employee_wallet_id',
       ]);
