@@ -21,10 +21,10 @@ import { JobModule } from '../job';
     BullModule.registerQueue(...Configuration.BullConfiguration.Register),
 
     EmployeeModule,
-    JobModule
+    JobModule,
   ],
   controllers: [WalletController],
   providers: [WalletService, WalletProcessor, WalletLogProcessor],
-  exports: [WalletProcessor, WalletLogProcessor, BullModule],
+  exports: [WalletProcessor, WalletLogProcessor, BullModule, WalletService],
 })
 export class WalletModule {}
