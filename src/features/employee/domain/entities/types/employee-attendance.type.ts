@@ -1,3 +1,5 @@
+import { Employee } from '../employee.entity';
+
 export enum AttendanceStatusEnum {
   PRESENT = 'PRESENT',
   ABSENT = 'ABSENT',
@@ -5,5 +7,7 @@ export enum AttendanceStatusEnum {
 }
 
 export type CreateEmployeeAttendancePayload = {
-  type: string;
+  date: Date;
+  status: AttendanceStatusEnum;
+  employee: Employee;
 };

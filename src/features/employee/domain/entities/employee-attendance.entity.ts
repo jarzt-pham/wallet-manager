@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { EMPLOYEE_ATTENDANCE_TABLE } from '../../infrastructure/tables';
 import { Employee } from './employee.entity';
-import { AttendanceStatusEnum } from './types';
+import { AttendanceStatusEnum, CreateEmployeeAttendancePayload } from './types';
 
 @Entity({
   name: EMPLOYEE_ATTENDANCE_TABLE.NAME,
@@ -50,4 +50,11 @@ export class EmployeeAttendance {
     name: EMPLOYEE_ATTENDANCE_TABLE.COLUMNS.UPDATED_AT.NAME,
   })
   updatedAt: Date;
+
+  create(payload: CreateEmployeeAttendancePayload) {
+    this.date = payload.date;
+    this.status = payload.status;
+    this.employee = payload.employee;
+    this.createdAt = new Date();
+  }
 }
