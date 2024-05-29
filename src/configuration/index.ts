@@ -1,4 +1,8 @@
-import { BullModuleOptions, BullRootModuleOptions } from '@nestjs/bull';
+import {
+  BullModuleOptions,
+  BullRootModuleOptions,
+  SharedBullAsyncConfiguration,
+} from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
@@ -17,6 +21,7 @@ export namespace Configuration {
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         port: configService.get('DATABASE_PORT') || 5432,
+        host: configService.get('DATABASE_HOST') || 'localhost',
         username: configService.get('DATABASE_USER') || 'postgres',
         password: configService.get('DATABASE_PASSWORD') || 'password',
         database: configService.get('DATABASE_NAME') || 'salary_hero',
@@ -28,6 +33,16 @@ export namespace Configuration {
   };
 
   export const BullConfiguration = {
+    Async: <SharedBullAsyncConfiguration>{
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('CACHE_HOST') || 'localhost',
+          port: configService.get('CACHE_PORT') || 6379,
+        },
+      }),
+    },
     Root: <BullRootModuleOptions>{
       redis: {
         host: 'localhost',
@@ -49,8 +64,6 @@ export namespace Configuration {
           backoff: 10000,
         },
       },
-    ]
-      
-    
+    ],
   };
 }

@@ -17,7 +17,7 @@ import { JobModule } from '../job';
     ConfigModule,
     TypeOrmModule.forFeature([EmployeeWallet, EmployeeWalletLog]),
 
-    BullModule.forRoot(Configuration.BullConfiguration.Root),
+    BullModule.forRootAsync(Configuration.BullConfiguration.Async),
     BullModule.registerQueue(...Configuration.BullConfiguration.Register),
 
     EmployeeModule,
