@@ -9,12 +9,15 @@ This document provides:
 - Domain and Database design
 - Infrastructure design
 - Source code structure
-- Code feature workflow
+- Use case workflow
+
+Due to the scope and time constraints, I haven't implemented all the API endpoints needed to fully interact with the features, such as viewing jobs, creating workdays for employees, etc. You can find the APIs I have provided for this evaluation here.
+
+Additionally, I have not implemented dead-letter handling and other advanced operations with the message queue.
 
 # Getting Started
 
-Based on the requirements of the company's evaluation, I can identify and plan the implementation of the database and the code flow. 
-To update all employees in the system (table can has over 1 million records), which involves a large amount of processing, I will use a message queue to reduce the load. 
+Based on the requirements of the company's evaluation, I can identify and plan the implementation of the database and the code flow. To update all employees in the system (table can has over 1 million records), which involves a large amount of processing, I will use a message queue to reduce the load.
 
 Since the task involves finance, I will use an RDBMS and apply normalization to store the data.
 
@@ -42,7 +45,10 @@ So, i will have 7 tables for solve the core function.
 
 At this point, I **will not create constraints** for my tables to save time and focus on the main features required by the evaluation. **I will describe how I would create constraints** for the columns and tables if I were to implement them.
 
-## Describe Table
+About Index and Partition, I also didn't include them in this project.
+
+## Table Meaning
+
 ### Employee
 
 For this table, I will only store the name and the type of employee.
@@ -153,9 +159,7 @@ The structure of the table will be:
 
 ### Employee Attendance
 
-For this table, I will store the working day of employee. The working day will have a status, this status will determine 
-how the employee works that day, it can be normal work, vacation or unauthorized leave from which the working days in the month can be 
-calculated for employee.
+For this table, I will store the working day of employee. The working day will have a status, this status will determine how the employee works that day, it can be normal work, vacation or unauthorized leave from which the working days in the month can be calculated for employee.
 
 Each employee only has 1 day corresponds with 1 record in table. (CONSTRAINT UNIQUE (employee_id, date))
 
@@ -204,23 +208,148 @@ The structure of the table will be:
 
 ## Diagram
 
-<img src="./assets/database_diagram.png">
+![](./assets/database_diagram.png)
 
 ## Seeds
+
 I have to written the scripts to seed for 5 tables, you can read mock data and script to run seeding in the [folder seeds](../src/infrastructure/database/seeds/).
 
 For:
+
 - Employee: [mock data](../src/infrastructure/database/seeds/mocks/employee.json), create 3 employee records
 - Employee type: [mock data](../src/infrastructure/database/seeds/mocks/employee-type.json), create 2 employee type records (full time and part time)
 - Employee salary: [mock data](../src/infrastructure/database/seeds/mocks/employee-salary.json), create 3 salary Information for 3 employees
 - Employee wallet: [mock data](../src/infrastructure/database/seeds/mocks/employee-wallet.json), create 3 wallets for 3 employees
-- Employee attendance: [mock data 1](../src/infrastructure/database/seeds/mocks/employee-attendance-nguyen-van-a.json) |  [mock data 2](../src/infrastructure/database/seeds/mocks/employee-attendance-nguyen-van-b.json) | [mock data 3](../src/infrastructure/database/seeds/mocks/employee-attendance-pham-dong-b.json), create attendance for 3 employees
+- Employee attendance: [mock data 1](../src/infrastructure/database/seeds/mocks/employee-attendance-nguyen-van-a.json) | [mock data 2](../src/infrastructure/database/seeds/mocks/employee-attendance-nguyen-van-b.json) | [mock data 3](../src/infrastructure/database/seeds/mocks/employee-attendance-pham-dong-b.json), create attendance for 3 employees
 
 Script: I implemented [script](../src/infrastructure/database/seeds/scripts/employee.script.ts#L272) to [app.service](../src/app.service.ts#L30)
 
-`
-Every times you start the application, seed will runs and only create record if table doesn't have any records (at the first times)
-`
+`Every times you start the application, seed will runs and only create record if table doesn't have any records (at the first times)`
 
-## Infrastructure Design
+# Infrastructure Design
 
+## Overview
+
+This project is built using NestJS, a progressive Node.js framework, to ensure scalable and maintainable code. To handle high traffic and asynchronous tasks, we integrate BullMQ and Redis for message queuing, which helps in reducing load and ensuring efficient processing.
+
+## Technology Stack
+
+- Backend Framework: NestJS, TypeORM
+- Message Queue: BullMQ with Redis
+- Database: PostgreSQL
+- Architecture: Domain-Driven Design
+
+## Infrastructure Component:
+
+1. NestJS:
+
+  - I chose NestJS because it can be easily set up and supports many libraries without requiring manual setup.
+  - For this test, I also used it for its rapid development capabilities and because i have to set up from zero.
+  - I chose TypeORM because it is simple and quick to set up.
+
+2. BullMQ and Redis:
+
+  - For this evaluation, I chose to implement Redis because it is simple and easy to set up, and I do not need extensive job management. However, for larger and more complex systems, I would implement Kafka instead of Redis to better suit the system's needs.
+
+3. PostgreSQL:
+
+  - A reliable relational database used to store all application data, including employee details, salaries, attendance records, wallets, and job logs.
+  - Why not Mysql but Postgresql?
+
+    - Support fully ACID, i thought with finance domain, ACID is extremely important
+    - Postgresql supports Index and Partition better Mysql, this use case can handles with over 5 million employees so i need deployment index and partition for every tables.
+
+# Source code structure
+
+In this project, I implemented Domain Driven Design (DDD), although I simplified some concepts to fit the scope of the evaluation. Instead of using the default structure of NestJS, I found that this structure was not suitable for the financial domain, making it difficult to manage and expand.
+
+## Structure
+
+Root Structure:
+
+- src/
+
+  - configuration
+  - features
+
+    - name_of_feature
+
+  - infrastructure
+
+  - utils
+
+Feature Structure:
+
+- features/
+
+  - name_of_feature
+
+    - application: Include use case
+    - domain: Include entity. I used TypeORM, so entities are also tables.
+    - exceptions: Include exception
+    - infrastructure: Include dao pattern, dto, service, and table constant
+    - presentation: Include controller
+    - validates: Include validate for controller and etc. At this point, i only write for controller
+
+## Describe feature
+
+Based on the requirements and the tables I have implemented, I identified two main components that need to be handled: wallet and employee. Therefore, I separated them into different features.
+
+For the [employee feature](../src/features/employee/), I will implement the API endpoints to manage employee information, such as viewing details, creating, and editing employees.
+
+For the [wallet feature](../src/features/wallet/), it will primarily focus on updating the balance. This feature will also handle processing with the queue.
+
+Additionally, since I am using a queue, I will also create a separate feature dedicated to handling queue processing, [job feature](../src/features/job/).
+
+# Use case workflow
+
+When you run the project for the first time, the system will automatically create sample data in the tables, specifically for the employee feature.
+
+Here, I will create 3 employees, along with 3 corresponding wallets, 3 salary records, and the workdays for each of these employees. The attendance records for these 3 employees will cover from the beginning of May until May 28, 2024, in the attendances table. `You can see the test data in Section Seeds`
+
+Based on the requirement to run the balance calculations and updates for employees at midnight, I will implement a cron job using a library provided by NestJS in [app.service.ts](../src/app.service.ts#L36).
+
+Here, I will implement a method to calculate and update the balance for employees, named [scheduleDailyCalculateAndUpdateBalance](../src/app.service.ts#L41).
+
+I will retrieve the current number of employees in the system and then calculate the number of batches needed for processing.
+
+For the scope of this task, I will update one employee per job. Therefore, the formula is: `Total number of employees / number of employees to be updated per job`. After that, I will use a loop to push tasks into the queue.
+
+Here, I have two queues:
+
+- WALLET_QUEUE: used for processing the balance updates for employees,
+- WALLET_LOG_QUEUE: used for creating logs to record changes to the wallet.
+
+Based on the batch size, I can calculate the limit and offset to accurately retrieve the exact number of employees that need to be updated for each job.
+
+There are two processors used to consume the jobs from these two queues: [wallet.processor.ts](../src/features/wallet/processors/wallet.processor.ts) and [wallet-log.processor.ts](../src/features/wallet/processors/wallet-log.processor.ts).
+
+## [Wallet Processor](../src/features/wallet/processors/wallet.processor.ts)
+
+In the wallet.processor.ts, it will create and update the job so that we can track and verify if the system has updated all the employees.
+
+Then, it will call the walletService to calculate and update the balances for the employees using the method [calculateAndUpdateByBatch](../src/features/wallet/infrastructure/services/wallet.service.ts#L86). Here, I only pass one parameter, which is the batch. With this method, we can update one or multiple employees as needed. This is also the main function in this project.
+
+You can read to understand how I handle the calculation and updating of salaries and balances for employees. Additionally, this function will also push tasks into the Wallet_Log_Queue to handle the logging of balance updates for employees.
+
+
+#### Illustration
+**First step:**
+
+In ``app.service.ts``:
+
+![alt text](./assets/activity-flow-1.png)
+
+**Second Step:**
+
+In ``wallet.processor.ts`` and ``wallet.service.ts``
+
+![alt text](./assets/activity-flow-2.png)
+
+**Third Step:**
+
+In ``wallet-log.processor.ts``
+
+![alt text](./assets/activity-flow-3.png)
+
+Done.
