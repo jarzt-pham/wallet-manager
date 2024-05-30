@@ -51,7 +51,7 @@ export class EmployeeService {
     this._logger = new Logger(EmployeeService.name);
   }
 
-  async createTest({
+  async create({
     employee,
     employeeSalary,
     employeeWallet,
@@ -109,87 +109,6 @@ export class EmployeeService {
       },
       wallet: {
         id: employeeWallet.id,
-        ballance: +employeeWallet.balance,
-      },
-    };
-  }
-
-  async create(createEmployeeDto: {
-    name: string;
-    employeeTypeId: number;
-    baseSalary: number;
-    balance: number;
-  }) {
-    // Depend on the type of employee, base salary will be for day or month
-    // Create Employee will create employee information, salary and wallet
-
-    let employeeType: EmployeeType;
-    try {
-      employeeType = await this._employeeTypeRepo.findOne({
-        where: {
-          id: createEmployeeDto.employeeTypeId,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      this._logger.error(error);
-      throw new InternalServerErrorException();
-    }
-
-    if (!employeeType) {
-      throw new EmployeeExceptions.EmployeeTypeNotFoundException(
-        createEmployeeDto.employeeTypeId,
-      );
-    }
-
-    const employee = new Employee();
-    employee.create({
-      name: createEmployeeDto.name,
-      employeeType,
-    });
-
-    const employeeSalary = new EmployeeSalary();
-    employeeSalary.create({
-      employee,
-      baseSalary: createEmployeeDto.baseSalary,
-    });
-
-    const employeeWallet = new EmployeeWallet();
-    employeeWallet.create({
-      balance: createEmployeeDto.balance,
-      employee,
-    });
-
-    const queryRunner = this._dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await this._employeeRepo.save(employee);
-
-      await Promise.all([
-        this._employeeSalaryRepo.save(employeeSalary),
-        this._employeeWalletRepo.save(employeeWallet),
-      ]);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this._logger.error(error.message);
-      throw new InternalServerErrorException();
-    } finally {
-      await queryRunner.release();
-    }
-
-    return {
-      id: employee.id,
-      name: employee.name,
-      employee_type: {
-        id: employeeType.id,
-        type: employeeType.type,
-      },
-      salary: {
-        base_salary: employeeSalary.baseSalary,
-      },
-      wallet: {
         ballance: +employeeWallet.balance,
       },
     };

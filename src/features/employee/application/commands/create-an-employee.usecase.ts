@@ -81,7 +81,7 @@ export class CreateAnEmployeeUsecase {
 
     let savedEmployee: CreateServiceOutput;
     try {
-      savedEmployee = await this._employeeService.createTest({
+      savedEmployee = await this._employeeService.create({
         employee,
         employeeSalary,
         employeeWallet,
