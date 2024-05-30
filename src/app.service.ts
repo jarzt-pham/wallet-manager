@@ -17,7 +17,7 @@ export class AppService implements OnModuleInit {
     private readonly _dataSource: DataSource,
     private readonly _employeeService: EmployeeService,
     private readonly _walletService: WalletService,
-    @InjectQueue(JOB_QUEUE.WALLET) private _walletQueue: Queue,
+    // @InjectQueue(JOB_QUEUE.WALLET) private _walletQueue: Queue,
   ) {
     this.logger = new Logger(AppService.name);
   }
@@ -33,28 +33,28 @@ export class AppService implements OnModuleInit {
     });
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async handleCron() {
-    await this.scheduleDailyCalculateAndUpdateBalance();
-  }
+  // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  // async handleCron() {
+  //   await this.scheduleDailyCalculateAndUpdateBalance();
+  // }
 
-  private async scheduleDailyCalculateAndUpdateBalance() {
-    const totalEmployees = await this._employeeService.countEmployees();
-    const NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
-      this._walletService.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
+  // private async scheduleDailyCalculateAndUpdateBalance() {
+  //   const totalEmployees = await this._employeeService.countEmployees();
+  //   const NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
+  //     this._walletService.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
 
-    const totalBatches = Math.ceil(
-      totalEmployees / NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
-    );
+  //   const totalBatches = Math.ceil(
+  //     totalEmployees / NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+  //   );
 
-    for (let batch = 0; batch < totalBatches; batch++) {
-      await this._walletQueue.add({
-        batch,
-        paging: {
-          limit: NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
-          offset: batch * NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
-        },
-      });
-    }
-  }
+  //   for (let batch = 0; batch < totalBatches; batch++) {
+  //     await this._walletQueue.add({
+  //       batch,
+  //       paging: {
+  //         limit: NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+  //         offset: batch * NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+  //       },
+  //     });
+  //   }
+  // }
 }

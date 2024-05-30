@@ -25,6 +25,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { EmployeeTypeEnum } from 'src/features/employee/domain/entities/types';
 import { getDaysInMonth } from 'src/utils';
+import { MessageQueueManager } from 'src/message-queue/message-queue';
+
+import { WalletProcessorJobPayload } from '../../processors/wallet.processor';
+import { Job } from 'src/features/job/domain/entities/job.entity';
 
 @Injectable()
 export class WalletService {
@@ -43,14 +47,21 @@ export class WalletService {
     @InjectRepository(EmployeeWallet)
     private _employeeWalletRepo: Repository<EmployeeWallet>,
 
-    @InjectQueue(JOB_QUEUE.WALLET) private _walletQueue: Queue,
-    @InjectQueue(JOB_QUEUE.WALLET_LOG) private _walletLogQueue: Queue,
+    // @InjectQueue(JOB_QUEUE.WALLET) private _walletQueue: Queue,
+    // @InjectQueue(JOB_QUEUE.WALLET_LOG) private _walletLogQueue: Queue,
+
+    private readonly _messageQueueManager: MessageQueueManager<
+      WalletProcessorJobPayload,
+      Job
+    >,
   ) {
     this._logger = new Logger(WalletService.name);
 
     this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
       this._configService.get('NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY') ??
       WalletService.DEFAULT_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
+
+    this._messageQueueManager.registryQueue(JOB_QUEUE.WALLET);
   }
 
   //test
@@ -65,15 +76,14 @@ export class WalletService {
     );
 
     for (let batch = 0; batch < totalBatches; batch++) {
-      await this._walletQueue.add({
-        batch,
+      await this._messageQueueManager.pushMessage(JOB_QUEUE.WALLET, {
+        batch: 0,
         paging: {
-          limit: this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
-          offset: batch * this.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+          limit: TESTING_NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+          offset: 0,
         },
       });
     }
-
     return 'wallets';
   }
 
@@ -153,14 +163,14 @@ export class WalletService {
           employeeWallet,
         );
 
-        // store log feature to queue to reduce traffic
-        await this._walletLogQueue.add({
-          employeeWallet,
-          amountChanged: salaryWillGet,
-          description: 'Update balance for employee wallet',
-          newBalance: balanceAfter,
-          previousBalance: employeeMapper.currentBalance,
-        });
+        // // store log feature to queue to reduce traffic
+        // await this._walletLogQueue.add({
+        //   employeeWallet,
+        //   amountChanged: salaryWillGet,
+        //   description: 'Update balance for employee wallet',
+        //   newBalance: balanceAfter,
+        //   previousBalance: employeeMapper.currentBalance,
+        // });
 
         employeeToStoreJobPayload.push(employee.id);
       }
