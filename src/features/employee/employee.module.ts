@@ -9,6 +9,8 @@ import { EmployeeSalary } from './domain/entities/employee-salary.entity';
 import { EmployeeAttendance } from './domain/entities/employee-attendance.entity';
 import { EmployeeWallet } from '../wallet/domain/entities/employee-wallet.entity';
 import { EmployeeDao } from './infrastructure/daos/employee.dao';
+import { FindAllEmployeesUsecase } from './application/queries/find-all-employees.usecase';
+import { CreateAnEmployeeUsecase } from './application/commands/create-an-employee.usecase';
 
 @Module({
   imports: [
@@ -23,7 +25,13 @@ import { EmployeeDao } from './infrastructure/daos/employee.dao';
     ]),
   ],
   controllers: [EmployeeController],
-  providers: [EmployeeService, EmployeeDao],
+  providers: [
+    EmployeeService, 
+    EmployeeDao,
+  
+    FindAllEmployeesUsecase,
+    CreateAnEmployeeUsecase
+  ],
   exports: [EmployeeService, EmployeeDao, TypeOrmModule],
 })
 export class EmployeeModule {}

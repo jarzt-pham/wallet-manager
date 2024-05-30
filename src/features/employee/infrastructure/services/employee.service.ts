@@ -15,6 +15,23 @@ import { DataSource, Repository } from 'typeorm';
 import { EmployeeExceptions } from '../../exceptions';
 import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
 
+export type CreateServiceOutput = {
+  id: number;
+  name: string;
+  employee_type: {
+    id: number;
+    type: string;
+  };
+  salary: {
+    id: number;
+    base_salary: number;
+  };
+  wallet: {
+    id: number;
+    ballance: number;
+  };
+};
+
 @Injectable()
 export class EmployeeService {
   private readonly _logger: Logger;
@@ -32,6 +49,69 @@ export class EmployeeService {
     private _employeeWalletRepo: Repository<EmployeeWallet>,
   ) {
     this._logger = new Logger(EmployeeService.name);
+  }
+
+  async createTest({
+    employee,
+    employeeSalary,
+    employeeWallet,
+    employeeType,
+  }: {
+    employee: Employee;
+    employeeSalary: EmployeeSalary;
+    employeeWallet: EmployeeWallet;
+    employeeType: EmployeeType;
+  }): Promise<{
+    id: number;
+    name: string;
+    employee_type: {
+      id: number;
+      type: string;
+    };
+    salary: {
+      id: number;
+      base_salary: number;
+    };
+    wallet: {
+      id: number;
+      ballance: number;
+    };
+  }> {
+    const queryRunner = this._dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await this._employeeRepo.save(employee);
+
+      await Promise.all([
+        this._employeeSalaryRepo.save(employeeSalary),
+        this._employeeWalletRepo.save(employeeWallet),
+      ]);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this._logger.error(error.message);
+      throw new InternalServerErrorException();
+    } finally {
+      await queryRunner.release();
+    }
+
+    return {
+      id: employee.id,
+      name: employee.name,
+      employee_type: {
+        id: employeeType.id,
+        type: employeeType.type,
+      },
+      salary: {
+        id: employeeSalary.id,
+        base_salary: employeeSalary.baseSalary,
+      },
+      wallet: {
+        id: employeeWallet.id,
+        ballance: +employeeWallet.balance,
+      },
+    };
   }
 
   async create(createEmployeeDto: {
