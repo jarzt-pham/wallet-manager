@@ -1,73 +1,87 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+<div style="text-align: center; font-size: 48px;">
+  Wallet Manager
+</div>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+  <p align="center">Project belongs <a src='https://www.salary-hero.com/'>Salary Hero.</a></p>
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+An application to calculate and update daily balances for monthly and daily wage workers in Thailand.
 
-## Installation
+## Built With
 
-```bash
-$ npm install
-```
+<p align="center" style="font-size: 18px"> 
+  NodeJS  |
+  NestJS  | 
+  Postgres  | 
+  BullMQ  | 
+  Redis  |
+  Docker
+</p>
 
-## Running the app
+## Getting Started
 
-```bash
-# development
-$ npm run start
+### Installing
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
+1. Clone Repository: Copy & paste below script to your terminal
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone https://github.com/jarzt-pham/salary-hero.git && cd ./salary-hero
 ```
 
-## Support
+2. You have to install below technologies, you also have 2 ways, **i recommend you choose the second way**:
+    1. Manual install related technology, following technology document and set up it on your machine: 
+        1. [Download Postgres](https://www.postgresql.org/download/)
+        2. [Download Redis](https://redis.io/downloads/)
+        3. [Download NodeJS](https://nodejs.org/en/download/package-manager)
+    2. With Docker _(Encourage)_ : Following [technology document and set up](https://www.docker.com/products/docker-desktop/) it on your machine
+  
+After installing above repository and set up, move to below section
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+### Setup Environment
+Copy & paste below script to your terminal
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+echo "
+# Database
+DATABASE_USER=
+DATABASE_PASSWORD=
+DATABASE_NAME=
+DATABASE_HOST=
 
-## License
+# App
+APP_PORT=
 
-Nest is [MIT licensed](LICENSE).
+# Function
+NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY=
+" > .env
+```
+
+You can get an example value [here](./.example.env)
+
+### Build and Run
+
+Open your terminal and make sure you stay in project folder, you have 2 ways to start this project:
+
+- With manual: 
+```bash
+npm run build & npm run start
+```
+
+- With Docker: 
+```bash
+docker compose up
+```
+
+### Testing 
+
+## Documentations
+
+You can read all documentation in the [folder docs](./docs/)
+
+But, i think you should read the documents in the order below for the deepest understanding
+
+1. [My thought about "How to implement this application"?](./docs/implement.md)
+2. [APIs document](./docs/apis-document.md)
+3. [Additional information](./docs/additional.md)
