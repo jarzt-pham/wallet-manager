@@ -7,7 +7,7 @@ import {
   EmployeeDao,
   EmployeeDetailDto,
 } from '../../infrastructure/daos/employee.dao';
-import { CreateServiceOutput, EmployeeService } from '../../infrastructure';
+import { CreateEmployeeServiceOutput, EmployeeService } from '../../infrastructure';
 import { EmployeeExceptions } from '../../exceptions';
 import { EmployeeType } from '../../domain/entities/employee-type.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,7 +16,7 @@ import { Repository } from 'typeorm';
 import { EmployeeSalary } from '../../domain/entities/employee-salary.entity';
 import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
 
-type CreateEmployeeUsecaseOutput = CreateServiceOutput;
+type CreateEmployeeUsecaseOutput = CreateEmployeeServiceOutput;
 
 @Injectable()
 export class CreateAnEmployeeUsecase {
@@ -79,9 +79,9 @@ export class CreateAnEmployeeUsecase {
       employee,
     });
 
-    let savedEmployee: CreateServiceOutput;
+    let savedEmployee: CreateEmployeeServiceOutput;
     try {
-      savedEmployee = await this._employeeService.create({
+      savedEmployee = await this._employeeService.createEmployee({
         employee,
         employeeSalary,
         employeeWallet,
@@ -96,7 +96,7 @@ export class CreateAnEmployeeUsecase {
     return this.mapper(savedEmployee);
   }
 
-  mapper(payload: CreateServiceOutput): CreateEmployeeUsecaseOutput {
+  mapper(payload: CreateEmployeeServiceOutput): CreateEmployeeUsecaseOutput {
     return payload;
   }
 }

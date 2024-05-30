@@ -15,7 +15,7 @@ import { DataSource, Repository } from 'typeorm';
 import { EmployeeExceptions } from '../../exceptions';
 import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
 
-export type CreateServiceOutput = {
+export type CreateEmployeeServiceOutput = {
   id: number;
   name: string;
   employee_type: {
@@ -51,7 +51,7 @@ export class EmployeeService {
     this._logger = new Logger(EmployeeService.name);
   }
 
-  async create({
+  async createEmployee({
     employee,
     employeeSalary,
     employeeWallet,
@@ -61,22 +61,7 @@ export class EmployeeService {
     employeeSalary: EmployeeSalary;
     employeeWallet: EmployeeWallet;
     employeeType: EmployeeType;
-  }): Promise<{
-    id: number;
-    name: string;
-    employee_type: {
-      id: number;
-      type: string;
-    };
-    salary: {
-      id: number;
-      base_salary: number;
-    };
-    wallet: {
-      id: number;
-      ballance: number;
-    };
-  }> {
+  }): Promise<CreateEmployeeServiceOutput> {
     const queryRunner = this._dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
