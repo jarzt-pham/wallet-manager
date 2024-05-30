@@ -3,6 +3,7 @@ import { EmployeeService } from '../infrastructure';
 import { EmployeeValidateUtils } from '../validates';
 import { FindAllEmployeesUsecase } from '../application/queries/find-all-employees.usecase';
 import { CreateAnEmployeeUsecase } from '../application/commands/create-an-employee.usecase';
+import { CreateAnAttendanceForEmployeeUsecase } from '../application/commands';
 
 @Controller('employees')
 export class EmployeeController {
@@ -10,6 +11,7 @@ export class EmployeeController {
     private readonly _employeeService: EmployeeService,
     private readonly _findAllUsecase: FindAllEmployeesUsecase,
     private readonly _createAnEmployeeUsecase: CreateAnEmployeeUsecase,
+    private readonly _createAnAttendanceUsecase: CreateAnAttendanceForEmployeeUsecase,
   ) {}
 
   @Get('/')
@@ -27,6 +29,18 @@ export class EmployeeController {
       employeeTypeId: payload.employee_type_id,
       baseSalary: payload.base_salary,
       balance: payload.balance,
+    });
+  }
+
+  @Post('/attendances')
+  async createAnAttendance(
+    @Body()
+    payload: EmployeeValidateUtils.CreateAttendanceForEmployeePayloadValidate,
+  ) {
+    return this._createAnAttendanceUsecase.execute({
+      date: new Date(payload.date),
+      employee_id: payload.employee_id,
+      status: payload.status,
     });
   }
 }

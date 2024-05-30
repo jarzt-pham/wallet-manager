@@ -11,6 +11,7 @@ import { EmployeeWallet } from '../wallet/domain/entities/employee-wallet.entity
 import { EmployeeDao } from './infrastructure/daos/employee.dao';
 import { FindAllEmployeesUsecase } from './application/queries/find-all-employees.usecase';
 import { CreateAnEmployeeUsecase } from './application/commands/create-an-employee.usecase';
+import { CreateAnAttendanceForEmployeeUsecase } from './application/commands';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { CreateAnEmployeeUsecase } from './application/commands/create-an-employ
     EmployeeDao,
   
     FindAllEmployeesUsecase,
-    CreateAnEmployeeUsecase
+    CreateAnEmployeeUsecase,
+    CreateAnAttendanceForEmployeeUsecase
   ],
   exports: [EmployeeService, EmployeeDao, TypeOrmModule],
 })
