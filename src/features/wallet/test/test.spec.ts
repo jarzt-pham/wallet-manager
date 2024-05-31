@@ -1,129 +1,159 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { DataSource } from 'typeorm';
 import { WalletModule } from '../wallet.module';
 import { WalletService } from '../infrastructure/services/wallet.service';
 import { getDaysInMonth } from '../../../utils';
 import { EmployeeTypeEnum } from '../../employee/domain/entities/types';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Configuration } from '../../../configuration';
+import { ScheduleModule } from '@nestjs/schedule';
+import { EmployeeModule } from '../../../features/employee';
+import { AppController } from '../../../app.controller';
+import { AppService } from '../../../app.service';
+import { UpdateWalletUsecase } from '../application/commands';
+import { InternalServerErrorException } from '@nestjs/common';
+import { EmployeeDao } from '../../employee/infrastructure/daos/employee.dao';
+import { EmployeeWallet } from '../domain/entities/employee-wallet.entity';
 
-describe('WalletService', () => {
+describe('Calculate salary', () => {
   let service: WalletService;
   let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [WalletModule],
-      providers: [
-        WalletService,
-        ConfigService,
-        { provide: DataSource, useValue: {} },
+      imports: [
+        ConfigModule.forRoot(),
+        TypeOrmModule.forRootAsync(Configuration.TypeOrmConfiguration.Async),
+
+        ScheduleModule.forRoot(),
+
+        EmployeeModule,
+        WalletModule,
       ],
+      controllers: [AppController],
+      providers: [AppService],
     }).compile();
 
     service = module.get<WalletService>(WalletService);
-    configService = module.get<ConfigService>(ConfigService);
   });
+
+  const mockEmployeeInformation = {
+    baseSalary: 3000,
+    currentBalance: 1000,
+    daysInMonth: getDaysInMonth(new Date()),
+    dayOfWorks: 20,
+  };
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
   it('should calculate salary correctly for a full-time employee', () => {
-    const baseSalary = 3000;
-    const dayOfWorks = 20;
-    const currentBalance = 1000;
-    const currentDate = new Date();
-    const daysInMonth = getDaysInMonth(currentDate);
-
     const result = service.calculateSalary({
-      baseSalary,
-      dayOfWorks,
+      baseSalary: mockEmployeeInformation.baseSalary,
+      currentBalance: mockEmployeeInformation.currentBalance,
+      dayOfWorks: mockEmployeeInformation.dayOfWorks,
       type: EmployeeTypeEnum.FULL_TIME,
-      currentBalance,
     });
 
-    const expectedDailyRate = Math.floor(baseSalary / daysInMonth);
-    const expectedSalaryWillGet = expectedDailyRate * dayOfWorks;
-    const expectedBalanceAfter = currentBalance + expectedSalaryWillGet;
+    const expectedDailyRate = Math.floor(
+      mockEmployeeInformation.baseSalary / mockEmployeeInformation.daysInMonth,
+    );
+    const expectedSalaryWillGet =
+      expectedDailyRate * mockEmployeeInformation.dayOfWorks;
+    const expectedBalanceAfter =
+      mockEmployeeInformation.currentBalance + expectedSalaryWillGet;
 
     expect(result.dailyRate).toEqual(expectedDailyRate);
     expect(result.salaryWillGet).toEqual(expectedSalaryWillGet);
     expect(result.balanceAfter).toEqual(expectedBalanceAfter);
   });
 
-  // Add more test cases for other scenarios if needed
+  it('should calculate salary correctly for a part-time employee', () => {
+    const result = service.calculateSalary({
+      baseSalary: mockEmployeeInformation.baseSalary,
+      currentBalance: mockEmployeeInformation.currentBalance,
+      dayOfWorks: mockEmployeeInformation.dayOfWorks,
+      type: EmployeeTypeEnum.PART_TIME,
+    });
+
+    const expectedDailyRate = mockEmployeeInformation.baseSalary;
+    const expectedSalaryWillGet =
+      expectedDailyRate * mockEmployeeInformation.dayOfWorks;
+    const expectedBalanceAfter =
+      mockEmployeeInformation.currentBalance + expectedSalaryWillGet;
+
+    expect(result.dailyRate).toEqual(expectedDailyRate);
+    expect(result.salaryWillGet).toEqual(expectedSalaryWillGet);
+    expect(result.balanceAfter).toEqual(expectedBalanceAfter);
+  });
 });
 
-// describe('UpdateWalletUsecase', () => {
-//   let usecase: UpdateWalletUsecase;
-//   let walletService: WalletService;
+describe('UpdateWalletUsecase', () => {
+  let usecase: UpdateWalletUsecase;
+  let walletService: WalletService;
 
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       providers: [
-//         UpdateWalletUsecase,
-//         { provide: EmployeeDao, useValue: {} },
-//         { provide: WalletService, useValue: {} },
-//       ],
-//     }).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot(),
+        TypeOrmModule.forRootAsync(Configuration.TypeOrmConfiguration.Async),
 
-//     usecase = module.get<UpdateWalletUsecase>(UpdateWalletUsecase);
-//     walletService = module.get<WalletService>(WalletService);
-//   });
+        ScheduleModule.forRoot(),
 
-//   it('should be defined', () => {
-//     expect(usecase).toBeDefined();
-//   });
+        EmployeeModule,
+        WalletModule,
+      ],
+      controllers: [AppController],
+      providers: [
+        AppService,
+        UpdateWalletUsecase,
+        {
+          provide: WalletService,
+          useValue: {
+            calculateSalary: jest.fn(),
+            updateWallet: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
 
-//   it('should execute update wallet successfully', async () => {
-//     const payload = {
-//       id: 1,
-//       base_salary: 3000,
-//       day_of_works: 20,
-//       type: 'FULL_TIME',
-//       name: 'John Doe',
-//       employee_wallet_id: 123,
-//       current_balance: 1000,
-//     };
+    usecase = module.get<UpdateWalletUsecase>(UpdateWalletUsecase);
+    walletService = module.get<WalletService>(WalletService);
+  });
 
-//     const salaryDetails = {
-//       dailyRate: 100,
-//       salaryWillGet: 2000,
-//       balanceAfter: 3000,
-//     };
+  it('should be defined', () => {
+    expect(usecase).toBeDefined();
+  });
 
-//     jest.spyOn(walletService, 'calculateSalary').mockReturnValue(salaryDetails);
-//     jest.spyOn(walletService, 'updateWallet').mockResolvedValue();
+  it('should execute update wallet employee full-time successfully', async () => {
+    const payload = {
+      id: 10,
+      base_salary: 3000,
+      day_of_works: 20,
+      type: EmployeeTypeEnum.FULL_TIME,
+      name: 'TESTING',
+      employee_wallet_id: 123,
+      current_balance: 1000,
+    };
 
-//     await expect(usecase.execute(payload)).resolves.toEqual(payload);
+    const expectedDailyRate = Math.floor(
+      payload.base_salary / getDaysInMonth(new Date()),
+    );
+    const expectedSalaryWillGet = expectedDailyRate * payload.day_of_works;
+    const expectedBalanceAfter =
+      payload.current_balance + expectedSalaryWillGet;
 
-//     expect(walletService.calculateSalary).toHaveBeenCalledWith({
-//       baseSalary: payload.base_salary,
-//       dayOfWorks: payload.day_of_works,
-//       type: payload.type,
-//       currentBalance: payload.current_balance,
-//     });
+    const expectedResult = {
+      id: 10,
+      baseSalary: 3000,
+      dayOfWorks: 20,
+      type: EmployeeTypeEnum.FULL_TIME,
+      name: 'TESTING',
+      employeeWalletId: 123,
+      currentBalance: expectedBalanceAfter,
+    };
 
-//     expect(walletService.updateWallet).toHaveBeenCalledWith({
-//       employeeWallet: expect.any(EmployeeWallet),
-//       balanceAfter: salaryDetails.balanceAfter,
-//       salaryWillGet: salaryDetails.salaryWillGet,
-//       employee: payload,
-//     });
-//   });
-
-//   it('should throw InternalServerErrorException when updateWallet fails', async () => {
-//     const payload = {
-//       // payload data
-//     };
-
-//     jest.spyOn(walletService, 'calculateSalary').mockReturnValue({});
-//     jest.spyOn(walletService, 'updateWallet').mockRejectedValue(new Error());
-
-//     await expect(usecase.execute(payload)).rejects.toThrow(
-//       InternalServerErrorException,
-//     );
-//   });
-
-//   // Add more test cases for other scenarios if needed
-// });
+    await expect(usecase.execute(payload)).resolves.toEqual(expectedResult);
+  });
+});
