@@ -75,6 +75,8 @@ export class UpdateWalletUsecase {
         salaryWillGet,
         employee: employeeMapper,
       });
+
+      employeeMapper.currentBalance = balanceAfter;
     } catch (error) {
       console.error(error);
       this._logger.error(error);

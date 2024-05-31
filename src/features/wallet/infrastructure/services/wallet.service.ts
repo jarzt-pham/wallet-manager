@@ -84,13 +84,13 @@ export class WalletService {
     const daysInMonth = getDaysInMonth(currentDate);
 
     // I assume salary will be integer in this assessment
-    let dailyRate =
+    const dailyRate =
       employee.type === EmployeeTypeEnum.FULL_TIME
         ? Math.floor(employee.baseSalary / daysInMonth)
         : employee.baseSalary;
 
-    let salaryWillGet = dailyRate * employee.dayOfWorks;
-    let balanceAfter = employee.currentBalance + salaryWillGet;
+    const salaryWillGet = dailyRate * employee.dayOfWorks;
+    const balanceAfter = employee.currentBalance + salaryWillGet;
 
     return {
       dailyRate,
