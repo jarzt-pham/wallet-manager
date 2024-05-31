@@ -324,31 +324,41 @@ Based on the batch size, I can calculate the limit and offset to accurately retr
 
 There are two processors used to consume the jobs from these two queues: [wallet.processor.ts](../src/features/wallet/processors/wallet.processor.ts) and [wallet-log.processor.ts](../src/features/wallet/processors/wallet-log.processor.ts).
 
-## [Wallet Processor](../src/features/wallet/processors/wallet.processor.ts)
+### [Wallet Processor](../src/features/wallet/processors/wallet.processor.ts)
 
 In the wallet.processor.ts, it will create and update the job so that we can track and verify if the system has updated all the employees.
 
-Then, it will call the walletService to calculate and update the balances for the employees using the method [calculateAndUpdateByBatch](../src/features/wallet/infrastructure/services/wallet.service.ts#L86). Here, I only pass one parameter, which is the batch. With this method, we can update one or multiple employees as needed. This is also the main function in this project.
+Then, it will call the Use Case [update-wallet.usecase.ts](../src/features/wallet/application/commands/update-wallet.usecase.ts) to update and calculate the balances for the employee using the method [execute](../src/features/wallet/application/commands/update-wallet.usecase.ts#L28). **This is also the main function in this project.**
 
 You can read to understand how I handle the calculation and updating of salaries and balances for employees. Additionally, this function will also push tasks into the Wallet_Log_Queue to handle the logging of balance updates for employees.
 
+### [Wallet Log Processor](../src/features/wallet/processors/wallet-log.processor.ts)
 
-#### Illustration
+In the wallet-log-processor.ts, it also creates and update the job so that we also can track and verify the log of wallet.
+
+After that, will creates the wallet log entity to database.
+
+```
+You can see below illustrations to more understand
+```
+
+### Illustration
+
 **First step:**
 
-In ``app.service.ts``:
+In `app.service.ts`:
 
 ![alt text](./assets/activity-flow-1.png)
 
 **Second Step:**
 
-In ``wallet.processor.ts`` and ``wallet.service.ts``
+In `wallet.processor.ts`, `update-wallet.usecase.ts` and `wallet.service.ts`
 
 ![alt text](./assets/activity-flow-2.png)
 
 **Third Step:**
 
-In ``wallet-log.processor.ts``
+In `wallet-log.processor.ts`
 
 ![alt text](./assets/activity-flow-3.png)
 
