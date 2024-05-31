@@ -76,6 +76,11 @@ docker compose up
 
 ### Testing 
 
+Open your terminal and make sure you stay in project folder, you have 2 ways to start this project:
+```bash
+npm run test
+```
+
 ## Documentations
 
 You can read all documentation in the [folder docs](./docs/)
