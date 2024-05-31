@@ -11,6 +11,7 @@ import { BullModule } from '@nestjs/bull';
 import { Configuration } from 'src/configuration';
 import { ConfigModule } from '@nestjs/config';
 import { JobModule } from '../job';
+import { UpdateWalletUsecase } from './application/commands';
 
 @Module({
   imports: [
@@ -24,7 +25,12 @@ import { JobModule } from '../job';
     JobModule,
   ],
   controllers: [WalletController],
-  providers: [WalletService, WalletProcessor, WalletLogProcessor],
+  providers: [
+    WalletService,
+    WalletProcessor,
+    WalletLogProcessor,
+    UpdateWalletUsecase,
+  ],
   exports: [WalletProcessor, WalletLogProcessor, BullModule, WalletService],
 })
 export class WalletModule {}
