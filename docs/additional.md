@@ -18,7 +18,7 @@
 
 
 <p>
-Estimation and Realtime:
+Realtime:
 
 - Initial project: 1,5 hours
 - Creating and refactor core function: 24 hours
