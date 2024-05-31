@@ -6,21 +6,20 @@ import {
 } from '@nestjs/bull';
 import { Job } from 'bull';
 import { JOB_QUEUE } from '../../job/queue';
-import { WalletService } from '../infrastructure/services/wallet.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Job as JobEntity } from 'src/features/job/domain/entities/job.entity';
+import { Job as JobEntity } from '../../job/domain/entities/job.entity';
 import { Repository } from 'typeorm';
 import {
   JobStatusEnum,
   JobTypeEnum,
-} from 'src/features/job/domain/entities/types/job.type';
+} from '../../job/domain/entities/types/job.type';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { JobExceptions } from 'src/features/job/exceptions';
+import { JobExceptions } from '../../job/exceptions';
 import { UpdateWalletUsecase } from '../application/commands';
 import {
   EmployeeDao,
   EmployeeDetailDto,
-} from 'src/features/employee/infrastructure/daos/employee.dao';
+} from '../../employee/infrastructure/daos/employee.dao';
 
 export type WalletProcessorJobPayload = {
   batch: number;

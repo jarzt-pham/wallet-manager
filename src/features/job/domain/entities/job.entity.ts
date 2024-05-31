@@ -2,13 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   UpdateDateColumn,
 } from 'typeorm';
 import { JOB_TABLE } from '../../infrastructure';
 import { CreateJobPayload } from './types/job.type';
-import { generateUUID } from 'src/utils';
+import { generateUUID } from '../../../../utils';
 
 @Entity({
   name: JOB_TABLE.NAME,

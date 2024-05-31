@@ -3,14 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EMPLOYEE_WALLET_TABLE } from '../../infrastructure';
-import { Employee } from 'src/features/employee/domain/entities/employee.entity';
+import { Employee } from '../../../employee/domain/entities/employee.entity';
 import { EmployeeWalletLog } from './employee-wallet-log.entity';
 import { CreateEmployeeWalletPayload } from './types/employee-wallet.type';
 

@@ -3,11 +3,11 @@ import {
   EMPLOYEE_SALARY_TABLE,
   EMPLOYEE_TABLE,
   EMPLOYEE_TYPE_TABLE,
-} from 'src/features/employee/infrastructure/tables';
-import { EmployeeType } from 'src/features/employee/domain/entities/employee-type.entity';
-import { Employee } from 'src/features/employee/domain/entities/employee.entity';
-import { EmployeeSalary } from 'src/features/employee/domain/entities/employee-salary.entity';
-import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
+} from '../../../../features/employee/infrastructure/tables';
+import { EmployeeType } from '../../../../features/employee/domain/entities/employee-type.entity';
+import { Employee } from '../../../../features/employee/domain/entities/employee.entity';
+import { EmployeeSalary } from '../../../../features/employee/domain/entities/employee-salary.entity';
+import { EmployeeWallet } from '../../../../features/wallet/domain/entities/employee-wallet.entity';
 import { createAlterIncrementQuery } from './common.script';
 
 import employeeTypeData from '../mocks/employee-type.json';
@@ -18,7 +18,7 @@ import employeeWallet from '../mocks/employee-wallet.json';
 import employeeAttendanceForNguyenVanA from '../mocks/employee-attendance-nguyen-van-a.json';
 import employeeAttendanceForNguyenVanB from '../mocks/employee-attendance-nguyen-van-b.json';
 import employeeAttendanceForPhamDongB from '../mocks/employee-attendance-pham-dong-b.json';
-import { EmployeeAttendance } from 'src/features/employee/domain/entities/employee-attendance.entity';
+import { EmployeeAttendance } from '../../../../features/employee/domain/entities/employee-attendance.entity';
 import { Logger } from '@nestjs/common';
 
 const truncateEmployeeType = async (dataSource: DataSource) => {
