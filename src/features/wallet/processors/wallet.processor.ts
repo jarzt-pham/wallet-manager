@@ -15,8 +15,12 @@ import {
   JobTypeEnum,
 } from 'src/features/job/domain/entities/types/job.type';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { EmployeeWalletExceptions } from '../exceptions';
 import { JobExceptions } from 'src/features/job/exceptions';
+import { UpdateWalletUsecase } from '../application/commands';
+import {
+  EmployeeDao,
+  EmployeeDetailDto,
+} from 'src/features/employee/infrastructure/daos/employee.dao';
 
 export type WalletProcessorJobPayload = {
   batch: number;
@@ -32,10 +36,10 @@ export class WalletProcessor {
   private _logger: Logger;
 
   constructor(
-    private _walletService: WalletService,
-
     @InjectRepository(JobEntity)
     private _jobRepo: Repository<JobEntity>,
+    private _updateWalletUsecase: UpdateWalletUsecase,
+    private _employeeDao: EmployeeDao,
   ) {
     this._logger = new Logger(WalletProcessor.name);
   }
@@ -66,15 +70,31 @@ export class WalletProcessor {
       throw new InternalServerErrorException('Error while saving job');
     }
 
+    let employees: EmployeeDetailDto[];
     try {
-      const employeeIds =
-        await this._walletService.calculateAndUpdateByBatch(batch);
+      employees = await this._employeeDao.getEmployeeDetails({
+        paging,
+      });
+    } catch (error) {
+      console.error(error);
+      this._logger.error(error);
+      throw new InternalServerErrorException();
+    }
 
-      savedJob.payload = { ...savedJob.payload, employee_ids: employeeIds };
-      savedJob.status = JobStatusEnum.COMPLETED;
-    } catch (err) {
-      savedJob.message = err.toString();
-      savedJob.status = JobStatusEnum.FAILED;
+    for (const employee of employees) {
+      try {
+        const executedEmployee =
+          await this._updateWalletUsecase.execute(employee);
+
+        savedJob.payload = {
+          ...savedJob.payload,
+          employee_ids: executedEmployee.id,
+        };
+        savedJob.status = JobStatusEnum.COMPLETED;
+      } catch (err) {
+        savedJob.message = err.toString();
+        savedJob.status = JobStatusEnum.FAILED;
+      }
     }
 
     return savedJob;
