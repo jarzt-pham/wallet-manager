@@ -12,8 +12,7 @@ import { EmployeeSalary } from '../../domain/entities/employee-salary.entity';
 import { EmployeeType } from '../../domain/entities/employee-type.entity';
 
 import { DataSource, Repository } from 'typeorm';
-import { EmployeeExceptions } from '../../exceptions';
-import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
+import { EmployeeWallet } from '../../../wallet/domain/entities/employee-wallet.entity';
 
 export type CreateEmployeeServiceOutput = {
   id: number;

@@ -8,7 +8,7 @@ import { WalletProcessor } from './processors/wallet.processor';
 import { WalletLogProcessor } from './processors/wallet-log.processor';
 import { EmployeeModule } from '../employee';
 import { BullModule } from '@nestjs/bull';
-import { Configuration } from 'src/configuration';
+import { Configuration } from '../../configuration';
 import { ConfigModule } from '@nestjs/config';
 import { JobModule } from '../job';
 import { UpdateWalletUsecase } from './application/commands';

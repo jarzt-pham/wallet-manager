@@ -7,17 +7,16 @@ import {
 import { Job } from 'bull';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { JOB_QUEUE } from 'src/features/job/queue';
+import { JOB_QUEUE } from '../../job/queue';
 import { EmployeeWalletLog } from '../domain/entities/employee-wallet-log.entity';
 import { EmployeeWallet } from '../domain/entities/employee-wallet.entity';
-import { Job as JobEntity } from 'src/features/job/domain/entities/job.entity';
+import { Job as JobEntity } from '../../job/domain/entities/job.entity';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import {
   JobStatusEnum,
   JobTypeEnum,
-} from 'src/features/job/domain/entities/types/job.type';
-import { EmployeeWalletExceptions } from '../exceptions';
-import { JobExceptions } from 'src/features/job/exceptions';
+} from '../../job/domain/entities/types/job.type';
+import { JobExceptions } from '../../job/exceptions';
 
 export type WalletLogProcessorJobPayload = {
   previousBalance: number;

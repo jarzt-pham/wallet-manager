@@ -3,15 +3,14 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EmployeeType } from 'src/features/employee/domain/entities/employee-type.entity';
-import { Employee } from 'src/features/employee/domain/entities/employee.entity';
+import { EmployeeType } from '../../../employee/domain/entities/employee-type.entity';
+import { Employee } from '../../../employee/domain/entities/employee.entity';
 import {
   EmployeeDao,
   EmployeeDetailDto,
-} from 'src/features/employee/infrastructure/daos/employee.dao';
-import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
-import { WalletService } from 'src/features/wallet/infrastructure/services/wallet.service';
+} from '../../../employee/infrastructure/daos/employee.dao';
+import { EmployeeWallet } from '../../domain/entities/employee-wallet.entity';
+import { WalletService } from '../../infrastructure/services/wallet.service';
 
 type UpdateWalletUsecaseInput = EmployeeDetailDto;
 

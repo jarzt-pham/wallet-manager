@@ -3,10 +3,6 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import {
-  EmployeeDao,
-  EmployeeDetailDto,
-} from '../../infrastructure/daos/employee.dao';
 import { CreateEmployeeServiceOutput, EmployeeService } from '../../infrastructure';
 import { EmployeeExceptions } from '../../exceptions';
 import { EmployeeType } from '../../domain/entities/employee-type.entity';
@@ -14,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from '../../domain/entities/employee.entity';
 import { Repository } from 'typeorm';
 import { EmployeeSalary } from '../../domain/entities/employee-salary.entity';
-import { EmployeeWallet } from 'src/features/wallet/domain/entities/employee-wallet.entity';
+import { EmployeeWallet } from '../../../wallet/domain/entities/employee-wallet.entity';
 
 type CreateEmployeeUsecaseOutput = CreateEmployeeServiceOutput;
 

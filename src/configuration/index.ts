@@ -8,7 +8,7 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
-import { JOB_QUEUE } from 'src/features/job/queue';
+import { JOB_QUEUE } from '../features/job/queue';
 
 export namespace Configuration {
   export const TypeOrmConfiguration: {

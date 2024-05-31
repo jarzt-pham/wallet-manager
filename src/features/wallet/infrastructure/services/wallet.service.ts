@@ -5,26 +5,16 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmployeeSalary } from 'src/features/employee/domain/entities/employee-salary.entity';
-import { EmployeeType } from 'src/features/employee/domain/entities/employee-type.entity';
-import { Employee } from 'src/features/employee/domain/entities/employee.entity';
 import { DataSource, Repository } from 'typeorm';
 import { EmployeeWallet } from '../../domain/entities/employee-wallet.entity';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { JOB_QUEUE } from 'src/features/job/queue';
-import {
-  EMPLOYEE_ATTENDANCE_TABLE,
-  EMPLOYEE_TYPE_TABLE,
-  EmployeeService,
-} from 'src/features/employee/infrastructure';
-import {
-  EmployeeDao,
-  EmployeeDetailDto,
-} from 'src/features/employee/infrastructure/daos/employee.dao';
+import { JOB_QUEUE } from '../../../job/queue';
+import { EmployeeService } from '../../../employee/infrastructure/services/employee.service';
+import { EmployeeDao } from '../../../../features/employee/infrastructure/daos/employee.dao';
 import { ConfigService } from '@nestjs/config';
-import { EmployeeTypeEnum } from 'src/features/employee/domain/entities/types';
-import { getDaysInMonth } from 'src/utils';
+import { EmployeeTypeEnum } from '../../../employee/domain/entities/types';
+import { getDaysInMonth } from '../../../../utils';
 
 @Injectable()
 export class WalletService {
