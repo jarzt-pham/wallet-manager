@@ -1,5 +1,5 @@
-<p style="text-align: center; font-size: 48px;">
-  Wallet Manager
+<p align="center">
+  >> Wallet Manager <<
 </p>
 
   <p align="center">Project belongs <a src='https://www.salary-hero.com/'>Salary Hero.</a></p>
