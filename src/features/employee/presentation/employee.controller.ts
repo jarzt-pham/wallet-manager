@@ -5,7 +5,7 @@ import { FindAllEmployeesUsecase } from '../application/queries/find-all-employe
 import { CreateAnEmployeeUsecase } from '../application/commands/create-an-employee.usecase';
 import { CreateAnAttendanceForEmployeeUsecase } from '../application/commands';
 
-@Controller('employees')
+@Controller('v1/employees')
 export class EmployeeController {
   constructor(
     private readonly _employeeService: EmployeeService,
