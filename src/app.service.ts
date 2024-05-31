@@ -38,14 +38,15 @@ export class AppService implements OnModuleInit {
     await this.scheduleDailyCalculateAndUpdateBalance();
   }
 
-  private async scheduleDailyCalculateAndUpdateBalance() {
+  async scheduleDailyCalculateAndUpdateBalance() {
     const totalEmployees = await this._employeeService.countEmployees();
     const NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY =
       this._walletService.NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY;
 
-    const totalBatches = Math.ceil(
-      totalEmployees / NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
-    );
+    const totalBatches = this._walletService.calculateBatch({
+      totalEmployees,
+      employeePerUpdating: NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY,
+    });
 
     for (let batch = 0; batch < totalBatches; batch++) {
       await this._walletQueue.add({
