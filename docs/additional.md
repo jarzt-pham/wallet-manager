@@ -18,10 +18,10 @@
 
 
 <p>
-Estimation and Realtime:
+Realtime:
 
-- Initial project: 1,5 hour
+- Initial project: 1,5 hours
 - Creating and refactor core function: 24 hours
-- Testing: 
+- Testing: 1 hour
 - Write documentation: 3 hours
 </p>
