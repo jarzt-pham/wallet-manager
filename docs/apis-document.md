@@ -1,6 +1,4 @@
-<p style="text-align: center; font-size: 48px;">
-  APIs Documentation
-</p>
+<p align="center">APIs Documentation</p>
 
 ## Introduction
 

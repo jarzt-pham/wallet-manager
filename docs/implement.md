@@ -1,4 +1,4 @@
-<p style="text-align: center; font-size: 48px;">
+<p align="center">
   How do I analysis and Implement
 </p>
 
