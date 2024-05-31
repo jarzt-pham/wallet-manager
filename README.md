@@ -55,6 +55,10 @@ APP_PORT=
 
 # Function
 NUMBER_OF_EMPLOYEES_TO_UPDATE_NIGHTLY=
+
+# Cache
+CACHE_HOST=
+CACHE_PORT=
 " > .env
 ```
 
