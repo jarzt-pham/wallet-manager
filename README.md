@@ -36,6 +36,11 @@ git clone https://github.com/jarzt-pham/salary-hero.git && cd ./salary-hero
         3. [Download NodeJS](https://nodejs.org/en/download/package-manager)
     2. With Docker _(Encourage)_ : Following [technology document and set up](https://www.docker.com/products/docker-desktop/) it on your machine
   
+3. Install lib node_modules
+```bash
+npm install
+```
+
 After installing above repository and set up, move to below section
 
 
@@ -70,7 +75,7 @@ Open your terminal and make sure you stay in project folder, you have 2 ways to 
 
 - With manual: 
 ```bash
-npm install && npm run start:dev
+npm run start:dev
 ```
 
 - With Docker: 
