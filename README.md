@@ -70,7 +70,7 @@ Open your terminal and make sure you stay in project folder, you have 2 ways to 
 
 - With manual: 
 ```bash
-npm run build & npm run start
+npm install && npm run build & npm run start
 ```
 
 - With Docker: 
