@@ -2,8 +2,6 @@
   >> Wallet Manager <<
 </p>
 
-  <p align="center">Project belongs <a src='https://www.salary-hero.com/'>Salary Hero.</a></p>
-
 ## Description
 
 An application to calculate and update daily balances for monthly and daily wage workers in Thailand.
